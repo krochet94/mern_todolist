@@ -56,6 +56,7 @@ const handleLogin = async () => {
     const response = await res.json();
     if (!res.ok) throw Error(response?.message);
 		setCredentials({ username, password });
+		window.localStorage.setItem("credentials", JSON.stringify({ username, password }));
     navigate('/todos');
 	} catch (error) {
 		console.log(error.message);
@@ -92,7 +93,7 @@ const handleLogin = async () => {
           />
         </FormControl>
 				<Button variant="contained" onClick={handleLogin} disabled={!username || !password}>{isLoading ? <CircularProgress size={20} style={{ color: 'white' }} /> : 'Login'}</Button>
-				<Button variant="contained" disabled={isLoading} onClick={() => navigate('/')}>Home</Button>
+				<Button variant="outlined" disabled={isLoading} onClick={() => navigate('/')}>Home</Button>
 			</Paper>
 			<CustomizableSnackbar message={snackbarMessage} snackbarOpen={snackbarOpen} setSnackbarOpen={setSnackbarOpen} />
     </div>

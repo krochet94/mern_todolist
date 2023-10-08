@@ -3,7 +3,7 @@ import React, { useState, createContext, useMemo } from 'react';
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [credentials, setCredentials] = useState({ username: 'krochet94', password: '121794' }); //to be removed
+  const [credentials, setCredentials] = useState(JSON.parse(window.localStorage.getItem("credentials")) || {});
 
   const value = useMemo(
     () => ({
@@ -12,6 +12,8 @@ export const AuthProvider = ({ children }) => {
     }),
     [credentials]
   );
+
+  
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

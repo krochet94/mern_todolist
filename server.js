@@ -18,6 +18,7 @@ const todosSchema = new mongoose.Schema({
     {
       task: String,
       completed: Boolean,
+      id: String
     }
   ]
 });
@@ -81,8 +82,8 @@ app.get('/todos', async (req, res) => {
     res.status(403).send({ message: 'Invalid access.' });
     return;
   }
-  const { todos } = await Todos.findOne({ userId: user._id }).exec();
-  res.json(todos);
+  const todosObj = await Todos.findOne({ userId: user._id }).exec();
+  res.json(todosObj?.todos || []);
 });
 
 main().catch(err => console.log(err));

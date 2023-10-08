@@ -116,7 +116,7 @@ const handleRegister = async () => {
           />
         </FormControl>
 				<Button variant="contained" onClick={handleRegister} disabled={!username || !password || !rePassword}>{isLoading ? <CircularProgress size={20} style={{ color: 'white' }} /> : 'Register'}</Button>
-				<Button variant="contained" disabled={isLoading} onClick={() => navigate('/')}>Home</Button>
+				<Button variant="outlined" disabled={isLoading} onClick={() => navigate('/')}>Home</Button>
 			</Paper>
 			<CustomizableSnackbar message={snackbarMessage} snackbarOpen={snackbarOpen} setSnackbarOpen={setSnackbarOpen} />
     </div>
