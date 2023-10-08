@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { TextField, Typography, Paper, Button, InputAdornment, IconButton, InputLabel, OutlinedInput, FormControl, CircularProgress } from '@mui/material'
 import { makeStyles } from '@mui/styles';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import CustomizableSnackbar from './layout/snackbar';
-import { AuthContext } from '../auth-context';
+import CustomizableSnackbar from '../layout/snackbar';
+import { AuthContext } from '../../auth-context';
 
 const useStyles = makeStyles(() => ({
 	container: {
@@ -12,7 +12,8 @@ const useStyles = makeStyles(() => ({
 		justifyContent: 'center',
 		alignItems: 'center',
 		height: '100vh',
-		width: '100vw'
+		width: '100vw',
+		backgroundColor: 'whitesmoke'
 	},
 	paper: {
 		display: 'flex',
@@ -55,7 +56,7 @@ const handleLogin = async () => {
     const response = await res.json();
     if (!res.ok) throw Error(response?.message);
 		setCredentials({ username, password });
-    navigate('/');
+    navigate('/todos');
 	} catch (error) {
 		console.log(error.message);
 		setSnackbarMessage(error.message);
@@ -90,7 +91,8 @@ const handleLogin = async () => {
             }
           />
         </FormControl>
-				<Button variant="contained" onClick={handleLogin}>{isLoading ? <CircularProgress size={20} style={{ color: 'white' }} /> : 'Login'}</Button>
+				<Button variant="contained" onClick={handleLogin} disabled={!username || !password}>{isLoading ? <CircularProgress size={20} style={{ color: 'white' }} /> : 'Login'}</Button>
+				<Button variant="contained" disabled={isLoading} onClick={() => navigate('/')}>Home</Button>
 			</Paper>
 			<CustomizableSnackbar message={snackbarMessage} snackbarOpen={snackbarOpen} setSnackbarOpen={setSnackbarOpen} />
     </div>

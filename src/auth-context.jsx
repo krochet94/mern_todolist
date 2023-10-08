@@ -3,7 +3,7 @@ import React, { useState, createContext, useMemo } from 'react';
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [credentials, setCredentials] = useState({});
+  const [credentials, setCredentials] = useState({ username: 'krochet94', password: '121794' }); //to be removed
 
   const value = useMemo(
     () => ({

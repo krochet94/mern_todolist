@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { TextField, Typography, Paper, Button, InputAdornment, IconButton, InputLabel, OutlinedInput, FormControl, CircularProgress } from '@mui/material'
 import { makeStyles } from '@mui/styles';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import CustomizableSnackbar from './layout/snackbar';
-import { AuthContext } from '../auth-context';
+import CustomizableSnackbar from '../layout/snackbar';
+import { AuthContext } from '../../auth-context';
 
 const useStyles = makeStyles(() => ({
 	container: {
@@ -12,7 +12,8 @@ const useStyles = makeStyles(() => ({
 		justifyContent: 'center',
 		alignItems: 'center',
 		height: '100vh',
-		width: '100vw'
+		width: '100vw',
+		backgroundColor: 'whitesmoke'
 	},
 	paper: {
 		display: 'flex',
@@ -23,7 +24,7 @@ const useStyles = makeStyles(() => ({
 		padding: '3rem',
 		maxWidth: '80vw',
 		minWidth: '20vw',
-		margin: 'auto'
+		margin: 'auto',
 	}
 }));
 
@@ -73,7 +74,7 @@ const handleRegister = async () => {
 
   return (
     <div className={classes.container}>
-			<Paper className={classes.paper} >
+			<Paper className={classes.paper}>
 			<Typography variant="h4">Register</Typography>
 				<TextField label="Username" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Username" />
 				<FormControl sx={{ m: 1, width: '25ch' }} variant="outlined">
@@ -114,7 +115,8 @@ const handleRegister = async () => {
             }
           />
         </FormControl>
-				<Button variant="contained" onClick={handleRegister}>{isLoading ? <CircularProgress size={20} style={{ color: 'white' }} /> : 'Register'}</Button>
+				<Button variant="contained" onClick={handleRegister} disabled={!username || !password || !rePassword}>{isLoading ? <CircularProgress size={20} style={{ color: 'white' }} /> : 'Register'}</Button>
+				<Button variant="contained" disabled={isLoading} onClick={() => navigate('/')}>Home</Button>
 			</Paper>
 			<CustomizableSnackbar message={snackbarMessage} snackbarOpen={snackbarOpen} setSnackbarOpen={setSnackbarOpen} />
     </div>
