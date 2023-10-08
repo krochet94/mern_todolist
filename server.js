@@ -12,6 +12,18 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', userSchema);
 
+const todosSchema = new mongoose.Schema({
+  userId: mongoose.Types.ObjectId,
+  todos: [
+    {
+      task: String,
+      completed: Boolean,
+    }
+  ]
+});
+
+const Todos = mongoose.model('Todos', todosSchema);
+
 dotenv.config({ path: '.env'});
 app.use(cors());
 app.use(express.json());
@@ -39,6 +51,38 @@ app.post('/login', async (req, res) => {
     return;
   }
   res.send({ message: 'Login success.' });
+});
+
+app.post('/todos', async (req, res) => {
+  const { authorization } = req.headers;
+  const [, token] = authorization.split(' ');
+  const [username, password] = token.split(':');
+  const todosItems = req.body;
+  const user = await User.findOne({ username }).exec();
+  if (!user || user?.password !== password) {
+    res.status(403).send({ message: 'Invalid access.' });
+    return;
+  }
+  const todos = await Todos.findOne({ userId: user._id }).exec();
+  if (!todos) await Todos.create({ userId: user._id, todos: todosItems });
+  else {
+    todos.todos = todosItems;
+    await todos.save();
+  }
+  res.json(todosItems);
+});
+
+app.get('/todos', async (req, res) => {
+  const { authorization } = req.headers;
+  const [, token] = authorization.split(' ');
+  const [username, password] = token.split(':');
+  const user = await User.findOne({ username }).exec();
+  if (!user || user?.password !== password) {
+    res.status(403).send({ message: 'Invalid access.' });
+    return;
+  }
+  const { todos } = await Todos.findOne({ userId: user._id }).exec();
+  res.json(todos);
 });
 
 main().catch(err => console.log(err));

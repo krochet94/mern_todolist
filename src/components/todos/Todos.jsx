@@ -1,4 +1,5 @@
-import React, { useState, useContext } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps */  
+import React, { useState, useContext, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { TextField, Typography, Grid, Button, Paper } from '@mui/material'
 import { makeStyles } from '@mui/styles';
@@ -6,6 +7,7 @@ import WavingHandIcon from '@mui/icons-material/WavingHand';
 import { AuthContext } from '../../auth-context';
 import Task from './Task';
 import CustomizableSnackbar from '../layout/snackbar';
+import Loading from '../layout/loading';
 
 const useStyles = makeStyles(() => ({
   addTaskContainer: {
@@ -45,17 +47,19 @@ const useStyles = makeStyles(() => ({
 export default function Todos() {
   const classes = useStyles();
   const navigate = useNavigate();
+  const isMounted = useRef(false);
   const { credentials } = useContext(AuthContext);
-  const [todos, setTodos] = useState([{ task: 'code', completed: false }, { task: 'sleep', completed: true }]);
+  const [todos, setTodos] = useState([]);
   const [addTask, setAddTask] = useState('');
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
 
   const handleAddTask = async () => {
     if (!addTask) return;
     const newTodos = [...todos, { task: addTask, completed: false }];
-    await handlePersist(newTodos);
+    await handlePersist(newTodos, true);
   };
   
   const handleUpdate = async (index) => {
@@ -64,7 +68,7 @@ export default function Todos() {
     await handlePersist(newTodos);
   };
 
-  const handlePersist = async (newTodos) => {
+  const handlePersist = async (newTodos, add) => {
     try {
       setIsLoading(true);
       const res = await fetch('http://localhost:4000/todos', {
@@ -73,11 +77,12 @@ export default function Todos() {
          "Content-Type": "application/json",
          "Authorization": `Basic ${credentials.username}:${credentials.password}`
          },
-        body: JSON.stringify({ newTodos })
+        body: JSON.stringify(newTodos)
       });
       const response = await res.json();
       if (!res.ok) throw Error(response?.message);
       setTodos(newTodos);
+      if (add) setAddTask('');
     } catch (error) {
       console.log(error.message);
       setSnackbarMessage(error.message);
@@ -87,22 +92,59 @@ export default function Todos() {
     }
   };
 
-  return (
-    <div className={classes.container}>
-      <Paper className={classes.paper}>
-        <Typography variant="h4">
-          Hi {credentials.username} <WavingHandIcon size={20} />
-        </Typography>
-        <Grid container className={classes.addTaskContainer}>
-          <TextField label="Add Task" value={addTask} placeholder="Add Task" onChange={(e) => setAddTask(e.target.value)} />
-          <Button color="success" variant="contained" disabled={!addTask} onClick={handleAddTask}>Add</Button>
-        </Grid>
-        <div className={classes.taskContainer}>
-          {todos.map((todo, index) => <Task todo={{ ...todo, index }} key={index} handleUpdate={handleUpdate} isLoading={isLoading} />)} 
-        </div>
-        <Button variant="contained" onClick={() => navigate('/')}>Home</Button>
-      </Paper>
-      <CustomizableSnackbar message={snackbarMessage} snackbarOpen={snackbarOpen} setSnackbarOpen={setSnackbarOpen} />
-    </div>
-  )
+  useEffect(() => {
+    isMounted.current = true;
+    const fetchTodos = async () => {
+      try {
+        setIsLoading(true);
+        const res = await fetch('http://localhost:4000/todos', {
+          method: 'GET',
+          headers: {
+           "Content-Type": "application/json",
+           "Authorization": `Basic ${credentials.username}:${credentials.password}`
+           }
+        });
+        const response = await res.json();
+        if (!res.ok) throw Error(response?.message);
+        if (isMounted.current) setTodos(response || []);
+      } catch (error) {
+        console.log(error.message);
+        if (isMounted.current) {
+          setSnackbarMessage(error.message);
+          setSnackbarOpen(true);
+        }
+      } finally {
+        if (isMounted.current) {
+          setIsLoading(false);
+          setInitialLoading(false);
+        }
+      }
+    };
+    fetchTodos();
+    return () => {
+      isMounted.current = false;
+    }
+  }, []);
+
+  if (initialLoading && isLoading) return <Loading />;
+  else {
+    return (
+      <div className={classes.container}>
+        <Paper className={classes.paper}>
+          <Typography variant="h4">
+            Hi {credentials.username} <WavingHandIcon size={20} />
+          </Typography>
+          <Grid container className={classes.addTaskContainer}>
+            <TextField label="Add Task" value={addTask} placeholder="Add Task" onChange={(e) => setAddTask(e.target.value)} />
+            <Button color="success" variant="contained" disabled={!addTask} onClick={handleAddTask}>Add</Button>
+          </Grid>
+          <div className={classes.taskContainer}>
+            {todos.map((todo, index) => <Task todo={{ ...todo, index }} key={index} handleUpdate={handleUpdate} isLoading={isLoading} />)} 
+          </div>
+          <Button variant="contained" onClick={() => navigate('/')}>Home</Button>
+        </Paper>
+        <CustomizableSnackbar message={snackbarMessage} snackbarOpen={snackbarOpen} setSnackbarOpen={setSnackbarOpen} />
+      </div>
+    )
+  }
 }

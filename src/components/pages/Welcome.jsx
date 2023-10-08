@@ -19,7 +19,7 @@ const useStyles = makeStyles(() => ({
 		justifyContent: 'center',
 		alignItems: 'center',
 		gap: '3rem',
-		padding: '5rem',
+		padding: '4rem',
 		maxWidth: '80vw',
 		minWidth: '20vw',
 		margin: 'auto'
@@ -35,7 +35,7 @@ export default function Welcome() {
   const { credentials } = useContext(AuthContext);
   const classes = useStyles();
   const navigate = useNavigate();
-  
+
   return (
     <div className={classes.container}>
       <Paper className={classes.paper}>
