@@ -10,7 +10,6 @@ Before you begin, ensure you have met the following requirements:
 
 - [Node.js](https://nodejs.org/) installed
 - [MongoDB](https://www.mongodb.com/try/download/community) installed
-- [MongoDB Compass](https://www.mongodb.com/try/download/compass) installed
 - [Yarn](https://www.npmjs.com/package/yarn) installed
 
 ## Installation
@@ -51,10 +50,7 @@ Before you begin, ensure you have met the following requirements:
     - Linux: Refer to the [MongoDB installation guide](https://www.mongodb.com/docs/manual/administration/install-on-linux/) for your specific distribution.
     <br>
 
-5. Download [MongoDB Compass](https://www.mongodb.com/try/download/compass)
-<br>
-
-6. Configure your application:
+5. Configure your application:
 
     - Create a .env file in the project root and set environment variables for DB_LOCAL_URI. For example:
 
@@ -64,13 +60,13 @@ Before you begin, ensure you have met the following requirements:
     - If you want to also change the variable name just make sure to modify your application code to use process.env to access these environment variables.
     <br>
 
-7. Load initial data / unit test.
+6. Load initial data / unit test.
       ```
       yarn run seeder
       ```
       <br>
 
-8. Open 2 terminals to start the application:
+7. Open 2 terminals to start the application:
     - Terminal 1: 
       ```
       yarn start
