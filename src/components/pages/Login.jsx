@@ -11,7 +11,7 @@ const useStyles = makeStyles(() => ({
 		display: 'flex',
 		justifyContent: 'center',
 		alignItems: 'center',
-		height: '100vh',
+		minHeight: '100vh',
 		width: '100vw',
 		backgroundColor: 'whitesmoke'
 	},
@@ -28,44 +28,44 @@ const useStyles = makeStyles(() => ({
 }));
 
 export default function Login() {
-const classes = useStyles();
-const navigate = useNavigate();
-const { setCredentials } = useContext(AuthContext);
-const [username, setUsername] = useState('');
-const [password, setPassword] = useState('');
-const [passwordVisible, setPasswordVisible] = useState(false);
-const [snackbarOpen, setSnackbarOpen] = useState(false);
-const [snackbarMessage, setSnackbarMessage] = useState('');
-const [isLoading, setIsLoading] = useState(false);
+	const classes = useStyles();
+	const navigate = useNavigate();
+	const { setCredentials } = useContext(AuthContext);
+	const [username, setUsername] = useState('');
+	const [password, setPassword] = useState('');
+	const [passwordVisible, setPasswordVisible] = useState(false);
+	const [snackbarOpen, setSnackbarOpen] = useState(false);
+	const [snackbarMessage, setSnackbarMessage] = useState('');
+	const [isLoading, setIsLoading] = useState(false);
 
-const handleLogin = async () => {
-	if (!username || !password) {
-		setSnackbarMessage('Please fill in all fields.');
-		setSnackbarOpen(true);
-		return;
-	}
+	const handleLogin = async () => {
+		if (!username || !password) {
+			setSnackbarMessage('Please fill in all fields.');
+			setSnackbarOpen(true);
+			return;
+		}
 
-	try {
-		setIsLoading(true);
-		const res = await fetch('http://localhost:4000/login', {
-			method: 'POST',
-			headers: { "Content-Type": "application/json"	},
-			body: JSON.stringify({ username, password })
-		});
-    const response = await res.json();
-    if (!res.ok) throw Error(response?.message);
-		setCredentials({ username, password });
-		window.localStorage.setItem("credentials", JSON.stringify({ username, password }));
-    navigate('/todos');
-	} catch (error) {
-		console.log(error.message);
-		setSnackbarMessage(error.message);
-		setSnackbarOpen(true);
-	} finally {
-		setIsLoading(false);
-	}
-};
-
+		try {
+			setIsLoading(true);
+			const res = await fetch('http://localhost:4000/login', {
+				method: 'POST',
+				headers: { "Content-Type": "application/json"	},
+				body: JSON.stringify({ username, password })
+			});
+			const response = await res.json();
+			if (!res.ok) throw Error(response?.message);
+			setCredentials({ username, password });
+			window.localStorage.setItem("credentials", JSON.stringify({ username, password }));
+			navigate('/');
+			window.alert('Login successful.');
+		} catch (error) {
+			console.log(error.message);
+			setSnackbarMessage(error.message);
+			setSnackbarOpen(true);
+		} finally {
+			setIsLoading(false);
+		}
+	};
 
   return (
     <div className={classes.container}>
@@ -92,7 +92,7 @@ const handleLogin = async () => {
           />
         </FormControl>
 				<Button variant="contained" onClick={handleLogin} disabled={!username || !password} fullWidth>{isLoading ? <CircularProgress size={20} style={{ color: 'white' }} /> : 'Login'}</Button>
-				<Button variant="outlined" disabled={isLoading} onClick={() => navigate('/')} fullWidth>Home</Button>
+				<Button variant="outlined" disabled={isLoading} onClick={() => navigate('/')} fullWidth>Return Home</Button>
 			</Paper>
 			<CustomizableSnackbar message={snackbarMessage} snackbarOpen={snackbarOpen} setSnackbarOpen={setSnackbarOpen} />
     </div>

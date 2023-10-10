@@ -4,6 +4,7 @@ import './App.css';
 import Register from './components/pages/Register';
 import Welcome from './components/pages/Welcome';
 import Login from './components/pages/Login';
+import Account from './components/pages/Account';
 import Todos from './components/todos/Todos';
 import { AuthContext } from './auth-context';
 
@@ -16,6 +17,7 @@ function App() {
           {!credentials?.username && <Route path="/register" exact element={<Register />} />}
           {!credentials?.username && <Route path="/login" exact element={<Login />} />}
           {credentials?.username && <Route path="/todos" exact element={<Todos />} />}
+          {credentials?.username && <Route path="/account" exact element={<Account />} />}
           <Route path="/" exact element={<Welcome />} />
           <Route exact path="*" element={<Welcome />} />
         </Routes>

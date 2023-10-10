@@ -1,35 +1,18 @@
 const express = require('express');
+const connectDatabase = require('./lib/config/database');
 const cors = require('cors');
-const mongoose = require('mongoose');
-const dotenv = require("dotenv");
 const app = express();
-const port = 4000
+const port = 4000;
 
-const userSchema = new mongoose.Schema({
-    username: String,
-    password: String,
-  });
+const User = require('./lib/models/user');
+const Todos = require('./lib/models/todos');
+const convertCredential = require('./lib/utils/convertCredential');
 
-const User = mongoose.model('User', userSchema);
-
-const todosSchema = new mongoose.Schema({
-  userId: mongoose.Types.ObjectId,
-  todos: [
-    {
-      task: String,
-      completed: Boolean,
-      id: String
-    }
-  ]
-});
-
-const Todos = mongoose.model('Todos', todosSchema);
-
-dotenv.config({ path: '.env'});
 app.use(cors());
 app.use(express.json());
 
-app.post('/register', async (req, res) => {
+// Registration
+app.post('/register', async (req, res) => { 
     const { username, password } = req.body;
     const user = await User.findOne({ username }).exec();
     if (user) {
@@ -40,6 +23,7 @@ app.post('/register', async (req, res) => {
     res.send({ message: 'Success.' });
 });
 
+// Login
 app.post('/login', async (req, res) => {
   const { username, password } = req.body;
   const user = await User.findOne({ username }).exec();
@@ -54,10 +38,9 @@ app.post('/login', async (req, res) => {
   res.send({ message: 'Login success.' });
 });
 
+// Saving Todos Data
 app.post('/todos', async (req, res) => {
-  const { authorization } = req.headers;
-  const [, token] = authorization.split(' ');
-  const [username, password] = token.split(':');
+  const { username, password } = convertCredential(req.headers);
   const todosItems = req.body;
   const user = await User.findOne({ username }).exec();
   if (!user || user?.password !== password) {
@@ -73,10 +56,9 @@ app.post('/todos', async (req, res) => {
   res.json(todosItems);
 });
 
+// Getting Todos Data
 app.get('/todos', async (req, res) => {
-  const { authorization } = req.headers;
-  const [, token] = authorization.split(' ');
-  const [username, password] = token.split(':');
+  const { username, password } = convertCredential(req.headers);
   const user = await User.findOne({ username }).exec();
   if (!user || user?.password !== password) {
     res.status(403).send({ message: 'Invalid access.' });
@@ -86,16 +68,35 @@ app.get('/todos', async (req, res) => {
   res.json(todosObj?.todos || []);
 });
 
+// Edit Account Data
+app.post('/account', async (req, res) => {
+  const { username, password } = convertCredential(req.headers);
+  const { username: newUsername, password: newPassword } = req.body;
+  const user = await User.findOne({ username }).exec();
+  if (!user || user?.password !== password) {
+    res.status(403).send({ message: 'Invalid access.' });
+    return;
+  }
+  if (username === newUsername && password === newPassword) {
+    res.status(400).send({ message: 'No change.' });
+    return;
+  }
+  if (username !== newUsername) {
+    user.username = newUsername;
+    await user.save();
+  }
+  if (password !== newPassword) {
+    user.password = newPassword;
+    await user.save();
+  }
+  res.json({newUsername, newPassword});
+});
+
 main().catch(err => console.log(err));
 
 async function main() {
-  let nodeConfig = false;
-  if ((process.env.NODE_ENV || "").trim() === "PRODUCTION") nodeConfig = true;
-  await mongoose.connect(`${nodeConfig ? process.env.DB_URI : process.env.DB_LOCAL_URI}`);
-  console.log(`Connected to database: ${nodeConfig ? process.env.DB_URI : process.env.DB_LOCAL_URI}`);
-    app.listen(port, () => {
-        console.log(`App listening at http://localhost:${port}`)
-    })
-
-  // use `await mongoose.connect('mongodb://user:password@127.0.0.1:27017/test');` if your database has auth enabled
+  await connectDatabase();
+  app.listen(port, () => {
+      console.log(`App listening at http://localhost:${port}`)
+  })
 }

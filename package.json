@@ -28,7 +28,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "server": "SET NODE_ENV=DEVELOPMENT & nodemon server"
+    "server": "SET NODE_ENV=DEVELOPMENT & nodemon server",
+    "seeder": "SET NODE_ENV=DEVELOPMENT & node lib/utils/seeder.js"
   },
   "eslintConfig": {
     "extends": [

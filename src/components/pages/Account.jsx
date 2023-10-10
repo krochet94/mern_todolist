@@ -1,0 +1,108 @@
+import React, { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom'
+import { TextField, Typography, Paper, Button, InputAdornment, IconButton, InputLabel, OutlinedInput, FormControl, CircularProgress } from '@mui/material'
+import { makeStyles } from '@mui/styles';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import CustomizableSnackbar from '../layout/snackbar';
+import { AuthContext } from '../../auth-context';
+
+const useStyles = makeStyles(() => ({
+	container: {
+		display: 'flex',
+		justifyContent: 'center',
+		alignItems: 'center',
+		minHeight: '100vh',
+		width: '100vw',
+		backgroundColor: 'whitesmoke'
+	},
+	paper: {
+		display: 'flex',
+		flexDirection: 'column',
+		justifyContent: 'center',
+		alignItems: 'center',
+		gap: '1.5rem',
+		padding: '3rem',
+		minWidth: '300px',
+		margin: 'auto'
+	}
+}));
+
+export default function Account() {
+const classes = useStyles();
+const navigate = useNavigate();
+const { credentials, setCredentials } = useContext(AuthContext);
+const [username, setUsername] = useState(credentials?.username || '');
+const [password, setPassword] = useState(credentials?.password || '');
+const [passwordVisible, setPasswordVisible] = useState(false);
+const [snackbarOpen, setSnackbarOpen] = useState(false);
+const [snackbarMessage, setSnackbarMessage] = useState('');
+const [isLoading, setIsLoading] = useState(false);
+const [isEdit, setIsEdit] = useState(false);
+
+const handleSave = async () => {
+	if (!username || !password) {
+		setSnackbarMessage('Please fill in all fields.');
+		setSnackbarOpen(true);
+		return;
+	}
+
+	try {
+		setIsLoading(true);
+		const res = await fetch('http://localhost:4000/account', {
+			method: 'POST',
+      headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Basic ${credentials.username}:${credentials.password}`
+      },
+			body: JSON.stringify({ username, password })
+		});
+    const response = await res.json();
+    if (!res.ok) throw Error(response?.message);
+		setCredentials({ username, password });
+		window.localStorage.setItem("credentials", JSON.stringify({ username, password }));
+		setSnackbarMessage('Saved successfully.');
+    setIsEdit(false);
+    setPasswordVisible(false);
+	} catch (error) {
+		console.log(error.message);
+		setSnackbarMessage(error.message);
+	} finally {
+		setIsLoading(false);
+		setSnackbarOpen(true);
+	}
+};
+
+  return (
+    <div className={classes.container}>
+			<Paper className={classes.paper} >
+			<Typography variant="h4">Account Details</Typography>
+				<TextField label="Username" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Username" disabled={!isEdit} fullWidth />
+				<FormControl sx={{ m: 1 }} variant="outlined"  disabled={!isEdit} fullWidth>
+          <InputLabel htmlFor="outlined-adornment-password1">Password</InputLabel>
+          <OutlinedInput
+            id="outlined-adornment-password1" type={passwordVisible ? 'text' : 'password'}
+						placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)}
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label="toggle password visibility"
+                  onClick={() => setPasswordVisible(!passwordVisible)}
+                  onMouseDown={(e) => e.preventDefault()}
+                  edge="end"
+                >
+                  {passwordVisible ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            }
+          />
+        </FormControl>
+        <Button variant="text" color={isEdit ? 'error' : 'primary'} onClick={() => setIsEdit(!isEdit)} fullWidth>{isEdit ? 'Cancel Edit' : 'Edit'}</Button>
+				<Button variant="contained" onClick={handleSave} disabled={!username || !password || !isEdit || (password === credentials?.password && username === credentials?.username)} fullWidth>
+          {isLoading ? <CircularProgress size={20} style={{ color: 'white' }} /> : 'Save'}
+        </Button>
+        <Button variant="outlined" disabled={isLoading} onClick={() => navigate('/')} fullWidth>Return Home</Button>
+			</Paper>
+			<CustomizableSnackbar message={snackbarMessage} snackbarOpen={snackbarOpen} setSnackbarOpen={setSnackbarOpen} />
+    </div>
+  )
+}

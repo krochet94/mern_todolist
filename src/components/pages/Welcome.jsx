@@ -10,7 +10,7 @@ const useStyles = makeStyles(() => ({
 		display: 'flex',
 		justifyContent: 'center',
 		alignItems: 'center',
-		height: '100vh',
+		minHeight: '100vh',
 		width: '100vw',
     backgroundColor: 'whitesmoke'
 	},
@@ -60,6 +60,7 @@ export default function Welcome() {
          {credentials?.username && (
           <div className={classes.buttonContainer}>
             <Button variant="outlined" onClick={() => navigate('/todos')} fullWidth>Go to Todos</Button>
+            <Button variant="outlined" onClick={() => navigate('/account')} fullWidth>Account</Button>
             <Button variant="contained" onClick={logout} color="error" fullWidth>Logout</Button>
           </div>
         )}

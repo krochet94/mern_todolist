@@ -64,7 +64,13 @@ Before you begin, ensure you have met the following requirements:
     - If you want to also change the variable name just make sure to modify your application code to use process.env to access these environment variables.
     <br>
 
-7. Open two(2) terminals to start your application:
+7. Load initial data / unit test.
+      ```
+      yarn run seeder
+      ```
+      <br>
+
+8. Open 2 terminals to start the application:
     - Terminal 1: 
       ```
       yarn start
@@ -74,13 +80,25 @@ Before you begin, ensure you have met the following requirements:
       yarn run server
       ```
     <br>
+
+## Testing
+  - Username : <b>testuser</b>
+  - Password : <b>testuser</b>
+  <br>
 ## Usage
 
-  1. Navigate to register page and register username and password.
-  2. After successful registration, login using the credentials.
-  3. Navigate to the Todolist
+  1. Navigate to register page and register username and password. (optional)
+  2. After successful registration, login using the credentials. Or you can use the test username and password to login.
+  3. Navigate to the Todolist page.
   4. Add new tasks, filter them according to status of completion, make them finished by clicking the check icon and the undo icon to revert back.
+  5. Navigate to the Account Details page.
+  6. Check, edit and save new account's username and/or password.
   5. Logout.
+  <br>
+
+## License
+
+  - ISC
 
 
 
