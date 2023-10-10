@@ -20,10 +20,9 @@ const useStyles = makeStyles(() => ({
 		flexDirection: 'column',
 		justifyContent: 'center',
 		alignItems: 'center',
-		gap: '1rem',
+		gap: '1.5rem',
 		padding: '3rem',
-		maxWidth: '80vw',
-		minWidth: '20vw',
+		minWidth: '300px',
 		margin: 'auto'
 	}
 }));
@@ -72,8 +71,8 @@ const handleLogin = async () => {
     <div className={classes.container}>
 			<Paper className={classes.paper} >
 			<Typography variant="h4">Login</Typography>
-				<TextField label="Username" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Username" />
-				<FormControl sx={{ m: 1, width: '25ch' }} variant="outlined">
+				<TextField label="Username" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Username" fullWidth />
+				<FormControl sx={{ m: 1 }} variant="outlined" fullWidth>
           <InputLabel htmlFor="outlined-adornment-password1">Password</InputLabel>
           <OutlinedInput
             id="outlined-adornment-password1" type={passwordVisible ? 'text' : 'password'}
@@ -92,8 +91,8 @@ const handleLogin = async () => {
             }
           />
         </FormControl>
-				<Button variant="contained" onClick={handleLogin} disabled={!username || !password}>{isLoading ? <CircularProgress size={20} style={{ color: 'white' }} /> : 'Login'}</Button>
-				<Button variant="outlined" disabled={isLoading} onClick={() => navigate('/')}>Home</Button>
+				<Button variant="contained" onClick={handleLogin} disabled={!username || !password} fullWidth>{isLoading ? <CircularProgress size={20} style={{ color: 'white' }} /> : 'Login'}</Button>
+				<Button variant="outlined" disabled={isLoading} onClick={() => navigate('/')} fullWidth>Home</Button>
 			</Paper>
 			<CustomizableSnackbar message={snackbarMessage} snackbarOpen={snackbarOpen} setSnackbarOpen={setSnackbarOpen} />
     </div>

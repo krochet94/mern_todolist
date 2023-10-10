@@ -21,13 +21,14 @@ const useStyles = makeStyles(() => ({
 		alignItems: 'center',
 		gap: '3rem',
 		padding: '4rem',
-		maxWidth: '80vw',
-		minWidth: '20vw',
+		minWidth: '300px',
 		margin: 'auto'
 	},
   buttonContainer:{
     display: 'flex',
-    justifyContent: 'space-evenly',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    gap: '1.5rem',
     width: '100%'
   }
 }));
@@ -47,19 +48,19 @@ export default function Welcome() {
   return (
     <div className={classes.container}>
       <Paper className={classes.paper}>
-        <Typography variant="h4">
+        <Typography variant="h4" style={{ width: '300px' }}>
           Todo App with Authentication Using MERN Stack
         </Typography>
         {!credentials?.username && (
           <div className={classes.buttonContainer}>
-            <Button variant="outlined" onClick={() => navigate('/register')}>Register</Button>
-            <Button variant="contained" onClick={() => navigate('/login')}>Login</Button>
+            <Button variant="contained" onClick={() => navigate('/login')} fullWidth>Login</Button>
+            <Button variant="outlined" onClick={() => navigate('/register')} fullWidth>Register</Button>
           </div>
         )}
          {credentials?.username && (
           <div className={classes.buttonContainer}>
-            <Button variant="outlined" onClick={() => navigate('/todos')}>Go to Todos</Button>
-            <Button variant="contained" onClick={logout} color="error">Logout</Button>
+            <Button variant="outlined" onClick={() => navigate('/todos')} fullWidth>Go to Todos</Button>
+            <Button variant="contained" onClick={logout} color="error" fullWidth>Logout</Button>
           </div>
         )}
       </Paper>

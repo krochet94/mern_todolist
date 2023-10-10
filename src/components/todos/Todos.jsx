@@ -15,7 +15,7 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'stretch',
-    width: '100%'
+    minWidth: '100%'
   },
   taskContainer: {
     display: 'flex',
@@ -39,8 +39,7 @@ const useStyles = makeStyles(() => ({
 		alignItems: 'center',
 		gap: '3rem',
 		padding: '5rem',
-		maxWidth: '80vw',
-		minWidth: '20vw',
+		minWidth: '300px',
 		margin: 'auto'
 	},
   selection: {
@@ -145,7 +144,7 @@ export default function Todos() {
             <TextField label="Add Task" value={addTask} placeholder="Add Task" onChange={(e) => setAddTask(e.target.value)} />
             <Button color="success" variant="contained" disabled={!addTask} onClick={handleAddTask}>Add</Button>
           </Grid>
-          <FormControl className={classes.selection}>
+          <FormControl className={classes.selection} fullWidth>
             <InputLabel id="selectLabel">Filter</InputLabel>
             <Select fullWidth value={completed} labelId="selectLabel" label="Filter" onChange={(e) => setCompleted(e.target.value)}>
               <MenuItem value={false}>
@@ -159,7 +158,7 @@ export default function Todos() {
           <div className={classes.taskContainer}>
             {todos.filter((todo) => completed ? todo.completed : !todo.completed).map((todo, index) => <Task todo={todo} key={todo.id || index} handleUpdate={handleUpdate} isLoading={isLoading} />)} 
           </div>
-          <Button variant="contained" onClick={() => navigate('/')}>Home</Button>
+          <Button variant="outlined" onClick={() => navigate('/')} fullWidth>Return Home</Button>
         </Paper>
         <CustomizableSnackbar message={snackbarMessage} snackbarOpen={snackbarOpen} setSnackbarOpen={setSnackbarOpen} />
       </div>
